@@ -1,13 +1,15 @@
 import React from 'react';
-// import Stats from 'components/Stats/Stats';
-// import feedbackOptions from '../feedback/feedbackOptions';
+import Statistics from 'components/Stats/Stats';
+import Section from '../Section/Section';
+import Notification from 'components/Notification/Notification';
+import s from '../Feedback/Feadback.css';
 class Feeadback extends React.Component {
   state = {
-    good: this.props.initialValue,
-    neutral: this.props.initialValue,
-    bad: this.props.initialValue,
-    total: this.props.initialValue,
-    percent: this.props.initialValue,
+    good: 0,
+    neutral: 0,
+    bad: 0,
+    total: 0,
+    percent: 0,
   };
 
   FeeadbackFormGood = () => {
@@ -43,7 +45,9 @@ class Feeadback extends React.Component {
   };
   countPositiveFeedbackPercentage = () => {
     const { good, bad } = this.state;
-    // const percent = this.state.percent;
+    if (good === 0 && bad === 0) {
+      return;
+    }
     const SumPercent = (good / (good + bad)) * 100;
     const percent = Math.round(SumPercent);
     this.setState(() => {
@@ -55,21 +59,21 @@ class Feeadback extends React.Component {
 
   render() {
     return (
-      <ul>
-        <p>Please Leave Feedback</p>
-        <div>
+      <div className={s.container}>
+        <Section title="Please leave feedback">
           <button
             type="button"
+            className={s.btn}
             onClick={() => {
               this.FeeadbackFormGood();
               this.countTotalFeedback();
-              //   this.countPositiveFeedbackPercentage();
             }}
           >
             Good 👍
           </button>
           <button
             type="button"
+            className={s.btn}
             onClick={() => {
               this.FeeadbackFormNeuthral();
               this.countTotalFeedback();
@@ -79,6 +83,7 @@ class Feeadback extends React.Component {
           </button>
           <button
             type="button"
+            className={s.btn}
             onClick={() => {
               this.FeeadbackFormBad();
               this.countTotalFeedback();
@@ -87,15 +92,21 @@ class Feeadback extends React.Component {
           >
             Bad 👎
           </button>
-        </div>
-        {/* <Stats /> */}
-        <p>Statistics</p>
-        <li>Good:{this.state.good}</li>
-        <li>Neutral:{this.state.neutral}</li>
-        <li>Bad:{this.state.bad}</li>
-        <li>Total:{this.state.total}</li>
-        <li>Percent: {this.state.percent}%</li>
-      </ul>
+        </Section>
+        {this.state.total === 0 ? (
+          <Notification message="No feedback given" />
+        ) : (
+          <Section title="Statistics">
+            <Statistics
+              good={this.state.good}
+              neutral={this.state.neutral}
+              bad={this.state.bad}
+              total={this.state.total}
+              positivePercentage={this.state.percent}
+            />
+          </Section>
+        )}
+      </div>
     );
   }
 }
